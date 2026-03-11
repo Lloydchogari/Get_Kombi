@@ -3,58 +3,74 @@
 // Contains font imports, resets, keyframes, and responsive breakpoints.
 
 export const GLOBAL_CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Outfit:wght@700;800&display=swap');
+  /* No Google Fonts import — system-ui loads instantly from the device */
 
   :root {
-    --ks-display : 'Outfit', sans-serif;
-    --ks-body    : 'Plus Jakarta Sans', sans-serif;
+    /*
+      LinkedIn font stack:
+      - system-ui         → picks the OS native font automatically
+      - -apple-system     → San Francisco on iPhone/Mac
+      - BlinkMacSystemFont → San Francisco on Chrome/Mac
+      - Segoe UI          → Windows
+      - Roboto            → Android
+      - Helvetica Neue    → older macOS fallback
+      - Arial, sans-serif → universal fallback
+    */
+    --ks-display : system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                   Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --ks-body    : system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
+                   Roboto, 'Helvetica Neue', Arial, sans-serif;
 
     /* Responsive spacing scale */
-    --space-xs   : 8px;
-    --space-sm   : 12px;
-    --space-md   : 20px;
-    --space-lg   : 32px;
-    --space-xl   : 48px;
+    --space-xs   : 6px;
+    --space-sm   : 10px;
+    --space-md   : 16px;
+    --space-lg   : 24px;
+    --space-xl   : 36px;
 
-    /* Responsive font scale (mobile-first, overridden at breakpoints) */
-    --fs-xs      : 11px;
-    --fs-sm      : 13px;
-    --fs-base    : 15px;
-    --fs-md      : 17px;
-    --fs-lg      : 20px;
-    --fs-xl      : 24px;
-    --fs-2xl     : 32px;
-    --fs-3xl     : 44px;
+    /* ── Mobile font scale (deliberately smaller than before) ── */
+    --fs-xs      : 10px;
+    --fs-sm      : 12px;
+    --fs-base    : 13px;
+    --fs-md      : 15px;
+    --fs-lg      : 17px;
+    --fs-xl      : 20px;
+    --fs-2xl     : 26px;
+    --fs-3xl     : 36px;
 
-    /* Max content width for each breakpoint */
-    --content-max: 520px;
+    /* Max content width */
+    --content-max: 500px;
   }
 
-  /* ── Tablet ── */
+  /* ── Tablet — sizes step up to comfortable reading size ── */
   @media (min-width: 640px) {
     :root {
-      --fs-base    : 16px;
-      --fs-md      : 18px;
-      --fs-lg      : 22px;
-      --fs-xl      : 28px;
-      --fs-2xl     : 36px;
-      --fs-3xl     : 52px;
-      --content-max: 600px;
+      --fs-xs      : 11px;
+      --fs-sm      : 13px;
+      --fs-base    : 15px;
+      --fs-md      : 17px;
+      --fs-lg      : 20px;
+      --fs-xl      : 24px;
+      --fs-2xl     : 32px;
+      --fs-3xl     : 44px;
+      --space-md   : 20px;
+      --space-lg   : 32px;
+      --content-max: 580px;
     }
   }
 
   /* ── Desktop ── */
   @media (min-width: 1024px) {
     :root {
-      --fs-base    : 16px;
-      --fs-md      : 18px;
-      --fs-lg      : 24px;
-      --fs-xl      : 30px;
-      --fs-2xl     : 40px;
-      --fs-3xl     : 56px;
-      --content-max: 680px;
-      --space-md   : 28px;
-      --space-lg   : 40px;
+      --fs-base    : 15px;
+      --fs-md      : 17px;
+      --fs-lg      : 22px;
+      --fs-xl      : 28px;
+      --fs-2xl     : 38px;
+      --fs-3xl     : 52px;
+      --content-max: 660px;
+      --space-md   : 26px;
+      --space-lg   : 38px;
     }
   }
 
@@ -97,7 +113,7 @@ export const GLOBAL_CSS = `
 
   /* ── Keyframes ── */
   @keyframes ks-fadeUp {
-    from { opacity: 0; transform: translateY(12px); }
+    from { opacity: 0; transform: translateY(14px); }
     to   { opacity: 1; transform: translateY(0);    }
   }
 
@@ -107,7 +123,7 @@ export const GLOBAL_CSS = `
   }
 
   @keyframes ks-slideUp {
-    from { transform: translateY(100%); opacity: 0; }
+    from { transform: translateY(60px); opacity: 0; }
     to   { transform: translateY(0);    opacity: 1; }
   }
 
@@ -119,6 +135,24 @@ export const GLOBAL_CSS = `
   @keyframes ks-scaleIn {
     from { transform: scale(.94); opacity: 0; }
     to   { transform: scale(1);   opacity: 1; }
+  }
+
+  /* Splash fades out gently — runs after 2.2s delay in Splash.jsx */
+  @keyframes ks-splashOut {
+    from { opacity: 1; }
+    to   { opacity: 0; pointer-events: none; }
+  }
+
+  /* Splash wordmark rises in */
+  @keyframes ks-splashText {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0);    }
+  }
+
+  /* Accent line under wordmark extends */
+  @keyframes ks-splashLine {
+    from { opacity: 0; width: 0; }
+    to   { opacity: 1; width: 40px; }
   }
 
   /* ── Utility: visually hidden (for accessibility) ── */
