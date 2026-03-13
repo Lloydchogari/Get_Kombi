@@ -10,9 +10,11 @@ import { AlertView }                  from "./views/AlertView.jsx";
 import { TopBar }                     from "./components/TopBar.jsx";
 import { PassengerView }              from "./views/PassengerView.jsx";
 import { DriverView }                 from "./views/DriverView.jsx";
+import { OnboardingView }             from "./views/OnboardingView.jsx";
+import './App.css';
 
 // App moves through four stages:
-// "splash" → "home" → "app" (with mode: passenger | driver | alert)
+// "splash" → "onboarding" → "home" → "app" (with mode: passenger | driver | alert)
 
 export default function App() {
   const [stage,    setStage]    = useState("splash"); // splash | home | app
@@ -40,10 +42,10 @@ export default function App() {
     document.body.style.color      = t.fg;
   }, [t]);
 
-  // ── Splash timer: after 1.8s move to home ──
+  // ── Splash timer: after 1.8s move to onboarding ──
   useEffect(() => {
     if (stage !== "splash") return;
-    const id = setTimeout(() => setStage("home"), 3200);
+    const id = setTimeout(() => setStage("onboarding"), 3200);
     return () => clearTimeout(id);
   }, [stage]);
 
@@ -83,6 +85,16 @@ export default function App() {
   // ── SPLASH ──
   if (stage === "splash") {
     return <Splash theme={theme} />;
+  }
+
+  // ── ONBOARDING ──
+  if (stage === "onboarding") {
+    return (
+      <OnboardingView
+        theme={t}
+        onGetStarted={() => setStage("home")}
+      />
+    );
   }
 
   // ── HOME ──
