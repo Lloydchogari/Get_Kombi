@@ -4,13 +4,7 @@
 
 import '../App.css';
 
-const BG_IMAGE = "https://images.unsplash.com/photo-1489824904134-891ab64532f1?w=1200&q=80&fit=crop&crop=center";
-
-const FEATURES = [
-  { label: "Live bus stop status" },
-  { label: "Real-time kombi demand" },
-  { label: "Instant community alerts" },
-];
+const BG_IMAGE = "https://i.pinimg.com/1200x/19/b9/56/19b95694727df19a5374eaefcce3b3fe.jpg";
 
 export function OnboardingView({ onGetStarted, theme }) {
   const isDark = theme === "dark";
@@ -29,15 +23,13 @@ export function OnboardingView({ onGetStarted, theme }) {
         }
 
         .ob-root {
-          position: fixed;
-          inset: 0;
-          display: flex;
-          flex-direction: column;
-          overflow: hidden;
-          font-family: var(--sf);
+          position: fixed; inset: 0;
+          display: flex; flex-direction: column;
+          overflow: hidden; font-family: var(--sf);
           animation: obFadeIn 0.6s ease both;
         }
 
+        /* ── Photo ── */
         .ob-photo {
           position: absolute; inset: 0;
           background-image: url("${BG_IMAGE}");
@@ -48,24 +40,19 @@ export function OnboardingView({ onGetStarted, theme }) {
           animation: obZoom 8s ease-out forwards;
         }
 
-        .ob-overlay-top {
+        /* ── Single dark overlay — no teal tint ── */
+        .ob-overlay {
           position: absolute; inset: 0;
           background: linear-gradient(
-            to bottom,
-            rgba(7,64,71,0.75) 0%,
-            rgba(21,41,46,0.28) 45%,
-            transparent 65%
+            to top,
+            rgb(0, 0, 0) 0%,
+            rgba(0, 0, 0, 0.72) 40%,
+            rgba(0, 0, 0, 0) 75%,
+            rgb(0, 0, 0) 100%
           );
         }
 
-        .ob-overlay-bottom {
-          position: absolute; inset: 0;
-          background: ${isDark
-            ? "linear-gradient(to top, rgba(7,64,71,0.97) 0%, rgba(21,41,46,0.88) 36%, transparent 62%)"
-            : "linear-gradient(to top, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.82) 36%, transparent 62%)"
-          };
-        }
-
+        /* ── Top wordmark ── */
         .ob-topbar {
           position: relative; z-index: 2;
           padding: clamp(44px,10vw,60px) clamp(20px,6vw,28px) 0;
@@ -102,6 +89,7 @@ export function OnboardingView({ onGetStarted, theme }) {
 
         .ob-spacer { flex: 1; }
 
+        /* ── Bottom panel ── */
         .ob-panel {
           position: relative; z-index: 2;
           padding: clamp(24px,6vw,40px) clamp(20px,6vw,28px) clamp(36px,9vw,52px);
@@ -111,7 +99,7 @@ export function OnboardingView({ onGetStarted, theme }) {
         .ob-heading {
           font-size: clamp(22px,6vw,30px);
           font-weight: 700; letter-spacing: -0.025em; line-height: 1.18;
-          color: ${isDark ? "#fff" : "var(--ks-deep)"};
+          color: #fff;
           margin-bottom: 10px;
           opacity: 0; animation: riseUp 0.7s ease 0.75s forwards;
         }
@@ -120,31 +108,14 @@ export function OnboardingView({ onGetStarted, theme }) {
         .ob-desc {
           font-size: clamp(13px,3.5vw,15px); font-weight: 400;
           line-height: 1.6;
-          color: ${isDark ? "rgba(200,214,216,0.65)" : "rgba(7,64,71,0.65)"};
-          margin-bottom: 22px; max-width: 380px;
+          color: rgba(255,255,255,0.58);
+          margin-bottom: 28px; max-width: 380px;
           opacity: 0; animation: riseUp 0.7s ease 0.88s forwards;
         }
 
-        .ob-features {
-          display: flex; flex-wrap: wrap; gap: 8px;
-          margin-bottom: 28px;
-          opacity: 0; animation: riseUp 0.7s ease 1.0s forwards;
-        }
-        .ob-pill {
-          display: inline-flex; align-items: center;
-          background: ${isDark ? "rgba(28,133,133,0.13)" : "rgba(28,133,133,0.09)"};
-          border: 1px solid ${isDark ? "rgba(29,162,126,0.26)" : "rgba(28,133,133,0.22)"};
-          border-radius: 99px; padding: 6px 14px;
-        }
-        .ob-pill-text {
-          font-size: 12px; font-weight: 500;
-          color: ${isDark ? "var(--ks-pgrey)" : "var(--ks-teal)"};
-          letter-spacing: 0.01em;
-        }
-
-        /* ── CTA — full pill shape ── */
+        /* ── CTA button ── */
         .ob-cta-wrap {
-          opacity: 0; animation: riseUp 0.7s ease 1.12s forwards;
+          opacity: 0; animation: riseUp 0.7s ease 1.0s forwards;
         }
 
         .ob-btn {
@@ -152,8 +123,7 @@ export function OnboardingView({ onGetStarted, theme }) {
           display: flex; align-items: center; justify-content: space-between;
           width: 100%; padding: 16px 20px;
           background: var(--ks-green);
-          border: none;
-          border-radius: 999px;
+          border: none; border-radius: 999px;
           cursor: pointer; overflow: hidden;
           transition: transform 0.2s ease, box-shadow 0.2s ease;
           box-shadow: 0 8px 32px rgba(29,162,126,0.40), 0 2px 8px rgba(0,0,0,0.18);
@@ -175,8 +145,7 @@ export function OnboardingView({ onGetStarted, theme }) {
 
         .ob-btn-left {
           display: flex; flex-direction: column;
-          align-items: flex-start; gap: 2px;
-          padding-left: 6px;
+          align-items: flex-start; gap: 2px; padding-left: 6px;
         }
         .ob-btn-label {
           font-size: clamp(15px,4vw,17px);
@@ -191,8 +160,7 @@ export function OnboardingView({ onGetStarted, theme }) {
           width: 44px; height: 44px; border-radius: 50%;
           background: rgba(255,255,255,0.18);
           display: flex; align-items: center; justify-content: center;
-          flex-shrink: 0;
-          transition: background 0.2s, transform 0.2s;
+          flex-shrink: 0; transition: background 0.2s, transform 0.2s;
         }
         .ob-btn:hover .ob-arrow {
           background: rgba(255,255,255,0.30);
@@ -202,8 +170,8 @@ export function OnboardingView({ onGetStarted, theme }) {
         .ob-footer {
           text-align: center; margin-top: 16px;
           font-size: 11px; font-weight: 400; letter-spacing: 0.04em;
-          color: ${isDark ? "rgba(200,214,216,0.28)" : "rgba(7,64,71,0.32)"};
-          opacity: 0; animation: riseUp 0.6s ease 1.25s forwards;
+          color: rgba(255,255,255,0.28);
+          opacity: 0; animation: riseUp 0.6s ease 1.12s forwards;
         }
 
         @keyframes obFadeIn  { from { opacity: 0; } to { opacity: 1; } }
@@ -220,8 +188,7 @@ export function OnboardingView({ onGetStarted, theme }) {
 
       <div className="ob-root">
         <div className="ob-photo" />
-        <div className="ob-overlay-top" />
-        <div className="ob-overlay-bottom" />
+        <div className="ob-overlay" />
 
         <div className="ob-topbar">
           <div className="ob-wordmark">Kombi<span>Signal</span></div>
@@ -242,14 +209,6 @@ export function OnboardingView({ onGetStarted, theme }) {
           <p className="ob-desc">
             Share real-time kombi availability and traffic updates with fellow commuters across Harare.
           </p>
-
-          <div className="ob-features">
-            {FEATURES.map(f => (
-              <div className="ob-pill" key={f.label}>
-                <span className="ob-pill-text">{f.label}</span>
-              </div>
-            ))}
-          </div>
 
           <div className="ob-cta-wrap">
             <button className="ob-btn" onClick={onGetStarted}>
