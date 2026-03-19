@@ -1,24 +1,29 @@
+// AlertView.jsx — KombiSignal alert reporting screen
+// Palette: #15292E · #074047 · #1C8585 · #1DA27E · #C8D6D8 · #FFFFFF
+// Font: SF Pro (iOS system font)
+
 import { useState } from "react";
 import { PRESET_ROUTES } from "../data/routes.js";
-import { buildSignal }   from "../utils/signals.js";
+import { buildSignal } from "../utils/signals.js";
 
-// Only two alert types — ZESA removed as it's not actionable for routing
+const SF = `-apple-system, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif`;
+const P  = { green: "#1DA27E", teal: "#1C8585", dark: "#074047", deep: "#15292E", pgrey: "#C8D6D8", red: "#E05252", amber: "#E8A84A" };
+
 const ALERT_TYPES = [
   {
-    id   : "traffic",
+    id:    "traffic",
     label: "Heavy traffic",
-    sub  : "Severe congestion near a rank or road",
-    color: "#e8c547",
+    sub:   "Severe congestion near a rank or road",
+    color: P.amber,
   },
   {
-    id   : "council",
-    label: "Council / ZRP activity",
-    sub  : "Operations or roadblock near a rank",
-    color: "#e05555",
+    id:    "other",
+    label: "Something else",
+    sub:   "Type a custom alert description",
+    color: P.teal,
   },
 ];
 
-// All preset ranks + every unique suburb from the routes list
 const PRESET_RANKS = ["Copacabana", "Machipisa", "Fourth St", "Mbare Musika"];
 
 function getAllSuburbs() {
@@ -27,291 +32,367 @@ function getAllSuburbs() {
   return [...new Set([...PRESET_RANKS, ...froms, ...tos])].sort();
 }
 
-export function AlertView({ onSubmit, onBack, sessionId, t }) {
+export function AlertView({ onSubmit, onComplete, sessionId, t }) {
   const [alertType,    setAlertType]    = useState(null);
-  const [location,     setLocation]     = useState(null);  // selected preset
-  const [customLoc,    setCustomLoc]    = useState("");     // typed custom location
-  const [showCustom,   setShowCustom]   = useState(false);  // toggle custom input
-  const [locSearch,    setLocSearch]    = useState("");      // filter suburbs
+  const [customAlert,  setCustomAlert]  = useState("");
+  const [locationInput, setLocationInput] = useState("");
   const [done,         setDone]         = useState(false);
 
-  const allSuburbs = getAllSuburbs();
-  const filtered   = allSuburbs.filter(s =>
-    s.toLowerCase().includes(locSearch.toLowerCase())
-  );
+  const allSuburbs      = getAllSuburbs();
+  const filtered        = locationInput.trim()
+    ? allSuburbs.filter(s => s.toLowerCase().includes(locationInput.toLowerCase()))
+    : [];
+  const effectiveLocation = locationInput.trim();
 
-  const effectiveLocation = showCustom
-    ? customLoc.trim()
-    : location;
-
-  const canSubmit = alertType && effectiveLocation;
+  const canSubmit =
+    alertType === "traffic"
+      ? Boolean(effectiveLocation)
+      : alertType === "other"
+        ? Boolean(customAlert.trim() && effectiveLocation)
+        : false;
 
   function submit() {
     if (!canSubmit) return;
-    const loc       = effectiveLocation;
-    const routeId   = `alert-${loc.replace(/\s+/g, "_")}`;
-    const routeMeta = { id: routeId, from: loc, to: "ALERT", rank: loc };
+    const routeId   = `alert-${effectiveLocation.replace(/\s+/g, "_")}`;
+    const routeMeta = { id: routeId, from: effectiveLocation, to: "ALERT", rank: effectiveLocation };
     const sig = buildSignal({
-      routeId,
-      type     : "none",
-      tags     : [alertType],
-      sessionId,
-      routeMeta,
+      routeId, type: "none",
+      tags: [alertType === "other" ? customAlert.trim() : alertType],
+      sessionId, routeMeta,
     });
     onSubmit(sig);
     setDone(true);
-    setTimeout(onBack, 2200);
+    setTimeout(() => onComplete?.(), 1400);
   }
 
-  // ── Success screen ──
+  // ── Success screen ────────────────────────────────────────────────────────────
   if (done) {
     return (
-      <div style={{
-        maxWidth: "var(--content-max)", margin: "0 auto", width: "100%",
-        padding: "72px 24px", textAlign: "center",
-        animation: "ks-fadeUp 0.5s ease both",
-      }}>
-        <div style={{
-          width: 56, height: 56, borderRadius: "50%",
-          background: t.green + "22", border: `2px solid ${t.green}`,
-          display: "flex", alignItems: "center", justifyContent: "center",
-          margin: "0 auto 20px",
-          fontFamily: "var(--ks-body)", fontSize: 22, color: t.green,
-          fontWeight: 700,
-        }}>
-          ✓
+      <>
+        <style>{STYLES(t)}</style>
+        <div className="av-root">
+          <div className="av-success" style={{ animation: "avFadeUp .5s ease both" }}>
+
+            {/* Check circle */}
+            <div className="av-check-wrap">
+              <div className="av-check-ring av-check-ring--outer" />
+              <div className="av-check-ring av-check-ring--inner" />
+              <div className="av-check-circle">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="none"
+                  stroke={P.green} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </div>
+            </div>
+
+            <h2 className="av-success-title">Alert submitted</h2>
+            <p className="av-success-sub">
+              Drivers near <strong style={{ color: t.fg }}>{effectiveLocation}</strong> have been notified
+            </p>
+
+            <div className="av-success-pill">
+              <span className="av-sdot" />
+              <span className="av-success-pill-text">Broadcasting now</span>
+            </div>
+          </div>
         </div>
-        <h2 style={{
-          fontFamily: "var(--ks-display)", fontSize: 22, fontWeight: 800,
-          color: t.fg, marginBottom: 8,
-        }}>
-          Alert submitted
-        </h2>
-        <p style={{ fontFamily: "var(--ks-body)", fontSize: 14, color: t.muted }}>
-          Drivers near {effectiveLocation} have been notified
-        </p>
-      </div>
+      </>
     );
   }
 
+  // ── Main form ─────────────────────────────────────────────────────────────────
   return (
-    <div style={{
-      maxWidth: "var(--content-max)", margin: "0 auto", width: "100%",
-      padding: "20px 16px 48px",
-      animation: "ks-fadeUp 0.5s ease both",
-    }}>
+    <>
+      <style>{STYLES(t)}</style>
+      <div className="av-root">
+        <div className="av-inner">
 
-      {/* Back button */}
-      <button
-        onClick={onBack}
-        style={{
-          background: "none", border: "none", cursor: "pointer",
-          fontFamily: "var(--ks-body)", fontSize: 13, color: t.muted,
-          padding: "0 0 22px", display: "flex", alignItems: "center", gap: 6,
-        }}
-      >
-        ← Back
-      </button>
+          {/* Header */}
+          <div className="av-header">
+            <div className="av-eyebrow">
+              <div className="av-eyebrow-line" />
+              <span className="av-eyebrow-text">Quick report</span>
+            </div>
+            <h1 className="av-h1">Report an alert</h1>
+            <p className="av-sub">Help drivers avoid trouble spots in real time</p>
+          </div>
 
-      {/* Header */}
-      <div style={{ marginBottom: 24 }}>
-        <h1 style={{
-          fontFamily: "var(--ks-display)", fontSize: "var(--fs-xl)",
-          fontWeight: 800, color: t.fg, letterSpacing: "-0.02em", marginBottom: 4,
-        }}>
-          Report an alert
-        </h1>
-        <p style={{ fontFamily: "var(--ks-body)", fontSize: "var(--fs-base)", color: t.muted }}>
-          Quick report — helps drivers avoid trouble spots
-        </p>
-      </div>
+          {/* Step 1 — Alert type */}
+          <p className="av-section-label">What are you reporting?</p>
 
-      {/* ── Step 1: Alert type ── */}
-      <p style={{
-        fontFamily: "var(--ks-body)", fontSize: "var(--fs-xs)", fontWeight: 700,
-        color: t.muted, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10,
-      }}>
-        What are you reporting?
-      </p>
-
-      <div style={{ display: "flex", flexDirection: "column", gap: 9, marginBottom: 26 }}>
-        {ALERT_TYPES.map(a => {
-          const on = alertType === a.id;
-          return (
-            <button
-              key={a.id}
-              onClick={() => setAlertType(a.id)}
-              style={{
-                display: "flex", alignItems: "center", gap: 14,
-                padding: "15px 16px", width: "100%", textAlign: "left",
-                background: on ? a.color + "14" : t.surface,
-                border: `1.5px solid ${on ? a.color : t.border2}`,
-                borderRadius: 12, cursor: "pointer", transition: "all 0.2s",
-              }}
-            >
-              {/* Colour dot — replaces icon */}
-              <div style={{
-                width: 10, height: 10, borderRadius: "50%",
-                background: on ? a.color : t.border2,
-                flexShrink: 0, transition: "background 0.2s",
-              }} />
-              <div style={{ flex: 1 }}>
-                <div style={{
-                  fontFamily: "var(--ks-body)", fontSize: "var(--fs-base)",
-                  fontWeight: 700, color: t.fg,
-                }}>
-                  {a.label}
-                </div>
-                <div style={{
-                  fontFamily: "var(--ks-body)", fontSize: "var(--fs-xs)",
-                  color: t.muted, marginTop: 2,
-                }}>
-                  {a.sub}
-                </div>
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* ── Step 2: Location ── */}
-      <p style={{
-        fontFamily: "var(--ks-body)", fontSize: "var(--fs-xs)", fontWeight: 700,
-        color: t.muted, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 10,
-      }}>
-        Where is this happening?
-      </p>
-
-      {/* Toggle: preset vs custom */}
-      <div style={{
-        display: "flex", background: t.surfaceB,
-        border: `1px solid ${t.border2}`, borderRadius: 10,
-        padding: 3, gap: 3, marginBottom: 14,
-      }}>
-        {[
-          { key: false, label: "Select area"    },
-          { key: true,  label: "Type location"  },
-        ].map(({ key, label }) => (
-          <button
-            key={String(key)}
-            onClick={() => { setShowCustom(key); setLocation(null); setCustomLoc(""); }}
-            style={{
-              flex: 1, padding: "8px 4px",
-              background: showCustom === key ? t.fg : "none",
-              border: "none", borderRadius: 8,
-              color: showCustom === key ? t.bg : t.muted,
-              fontFamily: "var(--ks-body)", fontSize: "var(--fs-sm)",
-              fontWeight: showCustom === key ? 700 : 500,
-              cursor: "pointer", transition: "all 0.18s",
-            }}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
-      {/* Preset suburb selector */}
-      {!showCustom && (
-        <div style={{ marginBottom: 24 }}>
-          {/* Search filter */}
-          <input
-            value={locSearch}
-            onChange={e => setLocSearch(e.target.value)}
-            placeholder="Search suburb or rank…"
-            style={{
-              width: "100%", background: t.surface,
-              border: `1.5px solid ${t.border2}`, borderRadius: 10,
-              padding: "11px 14px", color: t.fg,
-              fontFamily: "var(--ks-body)", fontSize: "var(--fs-base)",
-              marginBottom: 10, transition: "border-color 0.15s",
-            }}
-            onFocus={e  => e.currentTarget.style.borderColor = t.accent}
-            onBlur={e   => e.currentTarget.style.borderColor = t.border2}
-          />
-
-          {/* Suburb grid */}
-          <div style={{
-            display: "grid", gridTemplateColumns: "1fr 1fr",
-            gap: 7, maxHeight: 240, overflowY: "auto",
-          }}>
-            {filtered.slice(0, 30).map(s => {
-              const on = location === s;
+          <div className="av-type-group">
+            {ALERT_TYPES.map(a => {
+              const on = alertType === a.id;
               return (
                 <button
-                  key={s}
-                  onClick={() => setLocation(s)}
-                  style={{
-                    padding: "10px 8px",
-                    background: on ? t.fg : t.surface,
-                    border: `1.5px solid ${on ? t.fg : t.border2}`,
-                    borderRadius: 9, cursor: "pointer",
-                    fontFamily: "var(--ks-body)", fontSize: "var(--fs-sm)",
-                    fontWeight: on ? 700 : 400,
-                    color: on ? t.bg : t.fgSub,
-                    transition: "all 0.15s", textAlign: "center",
-                  }}
+                  key={a.id}
+                  className={`av-type-btn ${on ? "av-type-btn--on" : ""}`}
+                  style={on ? {
+                    background: a.color + "12",
+                    borderColor: a.color + "88",
+                  } : {}}
+                  onClick={() => setAlertType(a.id)}
                 >
-                  {s}
+                  {/* Accent bar on left when selected */}
+                  <div
+                    className="av-type-bar"
+                    style={{ background: on ? a.color : "transparent" }}
+                  />
+                  <div className="av-type-content">
+                    <div className="av-type-label" style={{ color: on ? t.fg : t.fg }}>
+                      {a.label}
+                    </div>
+                    <div className="av-type-sub">{a.sub}</div>
+                  </div>
+                  {/* Selection indicator */}
+                  <div className="av-type-indicator"
+                    style={{
+                      borderColor: on ? a.color : t.border,
+                      background:  on ? a.color : "transparent",
+                    }}
+                  >
+                    {on && (
+                      <svg viewBox="0 0 10 10" width="10" height="10" fill="none">
+                        <polyline points="1.5 5 4 7.5 8.5 2.5" stroke="#fff" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </div>
                 </button>
               );
             })}
           </div>
 
-          {filtered.length > 30 && (
-            <p style={{
-              fontFamily: "var(--ks-body)", fontSize: "var(--fs-xs)",
-              color: t.muted, marginTop: 8, textAlign: "center",
-            }}>
-              {filtered.length - 30} more — type to filter
-            </p>
+          {/* Custom description — only for "other" */}
+          {alertType === "other" && (
+            <div className="av-custom-wrap" style={{ animation: "avFadeUp .2s ease both" }}>
+              <p className="av-section-label" style={{ marginTop: 0 }}>Describe the issue</p>
+              <textarea
+                className="av-textarea"
+                value={customAlert}
+                onChange={e => setCustomAlert(e.target.value)}
+                placeholder="e.g. Road blocked near Fourth St rank…"
+                rows={3}
+              />
+            </div>
           )}
-        </div>
-      )}
 
-      {/* Custom location input */}
-      {showCustom && (
-        <div style={{ marginBottom: 24 }}>
-          <input
-            value={customLoc}
-            onChange={e => setCustomLoc(e.target.value)}
-            placeholder="e.g. Harare Drive near Chicken Inn…"
-            style={{
-              width: "100%", background: t.surface,
-              border: `1.5px solid ${t.border2}`, borderRadius: 10,
-              padding: "14px 16px", color: t.fg,
-              fontFamily: "var(--ks-body)", fontSize: "var(--fs-base)",
-              transition: "border-color 0.15s",
-            }}
-            onFocus={e  => e.currentTarget.style.borderColor = t.accent}
-            onBlur={e   => e.currentTarget.style.borderColor = t.border2}
-          />
-          <p style={{
-            fontFamily: "var(--ks-body)", fontSize: "var(--fs-xs)",
-            color: t.muted, marginTop: 7,
-          }}>
-            Be as specific as you like — street, landmark, or area name
-          </p>
-        </div>
-      )}
+          {/* Step 2 — Location */}
+          <p className="av-section-label">Where is this happening?</p>
 
-      {/* Submit */}
-      <button
-        onClick={submit}
-        disabled={!canSubmit}
-        style={{
-          width: "100%", padding: "17px",
-          background: canSubmit ? t.red : t.surface,
-          border: `1.5px solid ${canSubmit ? t.red : t.border2}`,
-          borderRadius: 14,
-          cursor: canSubmit ? "pointer" : "not-allowed",
-          fontFamily: "var(--ks-body)", fontWeight: 700, fontSize: "var(--fs-md)",
-          color: canSubmit ? "#ffffff" : t.muted,
-          transition: "all 0.25s",
-          boxShadow: canSubmit ? `0 4px 18px ${t.red}44` : "none",
-        }}
-      >
-        Submit alert
-      </button>
-    </div>
+          <div className="av-location-wrap">
+            <input
+              className="av-input"
+              value={locationInput}
+              onChange={e => setLocationInput(e.target.value)}
+              placeholder="Type suburb, rank or area…"
+              onFocus={e  => e.currentTarget.style.borderColor = P.teal}
+              onBlur={e   => e.currentTarget.style.borderColor = t.border}
+            />
+
+            {/* Location suggestion grid */}
+            {locationInput.trim() && filtered.length > 0 && (
+              <div className="av-suggestions" style={{ animation: "avFadeIn .15s ease both" }}>
+                {filtered.slice(0, 12).map(s => {
+                  const on = locationInput === s;
+                  return (
+                    <button
+                      key={s}
+                      className={`av-sug-btn ${on ? "av-sug-btn--on" : ""}`}
+                      onClick={() => setLocationInput(s)}
+                    >
+                      {s}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+
+          {/* Submit */}
+          <button
+            className={`av-submit ${canSubmit ? "av-submit--active" : "av-submit--disabled"}`}
+            onClick={submit}
+            disabled={!canSubmit}
+          >
+            Submit alert
+            {canSubmit && (
+              <span className="av-submit-arrow">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none"
+                  stroke="#fff" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 18 15 12 9 6"/>
+                </svg>
+              </span>
+            )}
+          </button>
+
+        </div>
+      </div>
+    </>
   );
+}
+
+// ── Styles ─────────────────────────────────────────────────────────────────────
+function STYLES(t) {
+  return `
+    .av-root {
+      min-height: calc(100vh - 88px);
+      padding: clamp(16px,5vw,24px) clamp(16px,5vw,24px) 52px;
+      font-family: ${SF};
+      animation: avFadeUp .22s ease both;
+    }
+    .av-inner { max-width: 480px; margin: 0 auto; width: 100%; }
+
+    /* eyebrow */
+    .av-eyebrow { display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+    .av-eyebrow-line { width:20px; height:1px; background:${P.green}; }
+    .av-eyebrow-text { font-size:10px; font-weight:600; letter-spacing:.16em; text-transform:uppercase; color:${P.green}; }
+
+    /* header */
+    .av-header { margin-bottom:26px; }
+    .av-h1  { font-size:clamp(22px,6vw,28px); font-weight:700; letter-spacing:-.025em; color:${t.fg}; line-height:1.1; margin-bottom:5px; }
+    .av-sub { font-size:14px; color:${t.muted}; line-height:1.5; }
+
+    /* section labels */
+    .av-section-label {
+      font-size:10px; font-weight:600; color:${t.muted};
+      letter-spacing:.12em; text-transform:uppercase;
+      margin-bottom:10px; margin-top:22px;
+    }
+
+    /* alert type buttons */
+    .av-type-group { display:flex; flex-direction:column; gap:9px; margin-bottom:6px; }
+    .av-type-btn {
+      display:flex; align-items:center; gap:0;
+      width:100%; text-align:left;
+      background:${t.surface}; border:1px solid ${t.border};
+      border-radius:14px; cursor:pointer; overflow:hidden;
+      transition:all .18s; padding:0;
+    }
+    .av-type-btn:hover { border-color:rgba(28,133,133,0.35); }
+    .av-type-btn--on   { }
+
+    .av-type-bar {
+      width:3px; align-self:stretch; flex-shrink:0;
+      transition:background .18s;
+    }
+    .av-type-content { flex:1; padding:14px 14px; }
+    .av-type-label  { font-size:14px; font-weight:700; color:${t.fg}; letter-spacing:-.01em; margin-bottom:2px; }
+    .av-type-sub    { font-size:12px; color:${t.muted}; line-height:1.4; }
+
+    .av-type-indicator {
+      width:20px; height:20px; border-radius:50%;
+      border:1.5px solid; flex-shrink:0;
+      margin-right:14px;
+      display:flex; align-items:center; justify-content:center;
+      transition:all .18s;
+    }
+
+    /* custom textarea */
+    .av-custom-wrap { margin-bottom:4px; }
+    .av-textarea {
+      width:100%; background:${t.surface}; border:1px solid ${t.border};
+      border-radius:12px; padding:13px 16px; color:${t.fg};
+      font-family:${SF}; font-size:14px; resize:none; outline:none;
+      transition:border-color .15s; line-height:1.5;
+    }
+    .av-textarea:focus { border-color:${P.teal}; }
+    .av-textarea::placeholder { color:${t.muted}; }
+
+    /* location */
+    .av-location-wrap { margin-bottom:22px; }
+    .av-input {
+      width:100%; background:${t.surface}; border:1px solid ${t.border};
+      border-radius:12px; padding:13px 16px; color:${t.fg};
+      font-family:${SF}; font-size:14px; outline:none;
+      transition:border-color .15s; margin-bottom:10px;
+    }
+    .av-input::placeholder { color:${t.muted}; }
+
+    /* suggestion grid */
+    .av-suggestions {
+      display:grid; grid-template-columns:1fr 1fr;
+      gap:7px; max-height:220px; overflow-y:auto;
+    }
+    .av-sug-btn {
+      padding:10px 10px; background:${t.surface};
+      border:1px solid ${t.border}; border-radius:10px;
+      cursor:pointer; font-family:${SF}; font-size:13px;
+      color:${t.fgSub}; text-align:left;
+      transition:all .13s; font-weight:400;
+    }
+    .av-sug-btn:hover    { border-color:${P.teal}; color:${P.teal}; }
+    .av-sug-btn--on      { background:${t.fg}; border-color:${t.fg}; color:${t.bg}; font-weight:600; }
+
+    /* submit button */
+    .av-submit {
+      width:100%; padding:17px 20px;
+      border:none; border-radius:999px;
+      font-family:${SF}; font-weight:700; font-size:15px;
+      cursor:pointer; transition:all .2s;
+      display:flex; align-items:center; justify-content:center; gap:10px;
+    }
+    .av-submit--active {
+      background:${P.red}; color:#fff;
+      box-shadow:0 6px 22px rgba(224,82,82,0.38);
+    }
+    .av-submit--active:hover  { opacity:.88; transform:translateY(-1px); box-shadow:0 10px 28px rgba(224,82,82,0.44); }
+    .av-submit--active:active { transform:scale(0.986); }
+    .av-submit--disabled {
+      background:${t.surface}; color:${t.muted};
+      border:1px solid ${t.border}; cursor:not-allowed; opacity:.6;
+    }
+    .av-submit-arrow { display:flex; align-items:center; }
+
+    /* success screen */
+    .av-success {
+      max-width:480px; margin:0 auto; width:100%;
+      padding:72px 24px; text-align:center;
+    }
+    .av-check-wrap {
+      position:relative; width:80px; height:80px;
+      margin:0 auto 24px; display:flex;
+      align-items:center; justify-content:center;
+    }
+    .av-check-ring {
+      position:absolute; border-radius:50%;
+      border:1px solid rgba(29,162,126,0.2);
+    }
+    .av-check-ring--outer { width:80px; height:80px; animation:avRingPop .6s ease .2s both; }
+    .av-check-ring--inner { width:60px; height:60px; animation:avRingPop .5s ease .1s both; }
+    .av-check-circle {
+      width:48px; height:48px; border-radius:50%;
+      background:rgba(29,162,126,0.12);
+      border:1.5px solid ${P.green};
+      display:flex; align-items:center; justify-content:center;
+      animation:avCheckPop .4s cubic-bezier(0.22,1,0.36,1) both;
+    }
+    .av-success-title {
+      font-size:22px; font-weight:700; letter-spacing:-.02em;
+      color:${t.fg}; margin-bottom:8px;
+    }
+    .av-success-sub {
+      font-size:14px; color:${t.muted}; line-height:1.6;
+      margin-bottom:24px;
+    }
+    .av-success-pill {
+      display:inline-flex; align-items:center; gap:7px;
+      background:rgba(29,162,126,0.10);
+      border:1px solid rgba(29,162,126,0.25);
+      border-radius:99px; padding:6px 16px;
+    }
+    .av-sdot {
+      width:6px; height:6px; border-radius:50%;
+      background:${P.green}; display:inline-block;
+      animation:avPulse 2s ease-in-out infinite;
+    }
+    .av-success-pill-text { font-size:12px; font-weight:500; color:${P.green}; letter-spacing:.06em; }
+
+    @keyframes avFadeUp  { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+    @keyframes avFadeIn  { from{opacity:0} to{opacity:1} }
+    @keyframes avRingPop { from{opacity:0;transform:scale(.6)} to{opacity:1;transform:scale(1)} }
+    @keyframes avCheckPop{ from{opacity:0;transform:scale(.7)} to{opacity:1;transform:scale(1)} }
+    @keyframes avPulse   { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.38;transform:scale(.75)} }
+
+    @media(min-width:400px) { .av-suggestions { grid-template-columns:1fr 1fr 1fr; } }
+  `;
 }

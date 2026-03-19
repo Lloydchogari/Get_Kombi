@@ -1,38 +1,72 @@
+// themes.js — KombiSignal design tokens
+// Palette: #15292E · #074047 · #1C8585 · #1DA27E · #C8D6D8 · #FFFFFF
+// Font: SF Pro (applied via globalCss.js)
+
 export const THEMES = {
+
+  // ── Dark mode ──────────────────────────────────────────────────────────────
   dark: {
-    bg:        "#000000",   // pure black
-    surface:   "#111111",
-    surfaceB:  "#1a1a1a",
-    border:    "#222222",
-    border2:   "#333333",
-    fg:        "#ffffff",
-    fgSub:     "#b8b8b8",
-    muted:     "#666666",
-    dim:       "#3a3a3a",
-    accent:    "#e8c547",
-    accentFg:  "#000000",
-    red:       "#e05555",
-    green:     "#4caf82",
-    topBarBg:  "rgba(0,0,0,0.92)",
-    shadow:    "0 1px 0 #222",
-    scrollbar: "#333333",
-  },
-  light: {
-    bg:        "#ffffff",   // pure white
-    surface:   "#f5f5f5",
-    surfaceB:  "#ebebeb",
-    border:    "#e0e0e0",
-    border2:   "#d0d0d0",
-    fg:        "#000000",
-    fgSub:     "#333333",
-    muted:     "#888888",
-    dim:       "#cccccc",
-    accent:    "#b8860b",
+    // Backgrounds
+    bg:        "#0d1f23",       // page background — deepest teal-black
+    surface:   "#15292E",       // card / input surface — --ks-deep
+    surfaceB:  "#0a191c",       // recessed surface (inputs inside cards)
+    topBarBg:  "rgba(13,31,35,0.82)", // frosted glass top bar
+
+    // Borders
+    border:    "rgba(200,214,216,0.11)",  // subtle divider
+    border2:   "rgba(200,214,216,0.17)",  // slightly stronger border
+
+    // Typography
+    fg:        "#ffffff",                       // primary text
+    fgSub:     "rgba(255,255,255,0.70)",        // secondary text
+    muted:     "rgba(200,214,216,0.46)",        // muted / hint text
+    dim:       "rgba(200,214,216,0.20)",        // dimmed / disabled
+
+    // Accent — KombiSignal green
+    accent:    "#1DA27E",
     accentFg:  "#ffffff",
-    red:       "#c0392b",
-    green:     "#2e7d56",
-    topBarBg:  "rgba(255,255,255,0.92)",
-    shadow:    "0 1px 0 #e0e0e0",
-    scrollbar: "#d0d0d0",
+
+    // Semantic colours
+    green:     "#1DA27E",      // success / arrived
+    teal:      "#1C8585",      // secondary accent / active states
+    red:       "#E05252",      // critical / no kombis
+    amber:     "#E8A84A",      // moderate / few kombis
+
+    // Misc
+    shadow:    "0 1px 0 rgba(0,0,0,0.35)",
+    scrollbar: "rgba(28,133,133,0.25)",
+  },
+
+  // ── Light mode ─────────────────────────────────────────────────────────────
+  light: {
+    // Backgrounds
+    bg:        "#eef4f4",       // page background — pale teal tint
+    surface:   "#ffffff",       // card / input surface
+    surfaceB:  "#f5fafa",       // recessed surface (inputs inside cards)
+    topBarBg:  "rgba(238,244,244,0.88)", // frosted glass top bar
+
+    // Borders
+    border:    "rgba(7,64,71,0.10)",   // subtle divider
+    border2:   "rgba(7,64,71,0.16)",   // slightly stronger border
+
+    // Typography
+    fg:        "#15292E",                       // primary text — --ks-deep
+    fgSub:     "rgba(21,41,46,0.72)",           // secondary text
+    muted:     "rgba(7,64,71,0.46)",            // muted / hint text
+    dim:       "rgba(7,64,71,0.20)",            // dimmed / disabled
+
+    // Accent — KombiSignal green
+    accent:    "#1DA27E",
+    accentFg:  "#ffffff",
+
+    // Semantic colours
+    green:     "#1DA27E",      // success / arrived
+    teal:      "#1C8585",      // secondary accent / active states
+    red:       "#E05252",      // critical / no kombis
+    amber:     "#E8A84A",      // moderate / few kombis
+
+    // Misc
+    shadow:    "0 1px 0 rgba(7,64,71,0.08)",
+    scrollbar: "rgba(28,133,133,0.20)",
   },
 };

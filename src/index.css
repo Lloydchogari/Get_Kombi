@@ -1,15 +1,43 @@
-/* index.css — minimal reset only. All design tokens live in src/styles/ */
+/* ─── index.css — KombiSignal ─────────────────────────────────────────────────
+   Loaded before React mounts. Kept intentionally minimal — just enough to
+   prevent a flash of unstyled content (FOUC) and set the correct base.
+   All design tokens, keyframes, and component styles live in:
+     src/styles/globalCss.js  — injected at runtime by App.jsx
+     src/styles/theme.js      — colour tokens per theme
+   ───────────────────────────────────────────────────────────────────────── */
 
-*, *::before, *::after {
+/* ── Universal reset ──────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  margin    : 0;
+  padding   : 0;
 }
 
-html, body, #root {
-  height: 100%;
+/* ── Full-height mount ─────────────────────────────────────────────────────── */
+html,
+body,
+#root {
+  height    : 100%;
+  min-height: 100dvh;   /* dynamic viewport — accounts for iOS browser chrome */
+}
+
+/* ── Pre-mount base ────────────────────────────────────────────────────────── */
+/* Sets the KombiSignal dark background (#0d1f23) before React hydrates,
+   preventing a white flash on load. Matches --bg in THEMES.dark. */
+html {
+  background: #0d1f23;
+  color     : #ffffff;
 }
 
 body {
-  background: #0a0a0a; /* dark default before React mounts */
+  background             : #0d1f23;
+  color                  : #ffffff;
+  font-family            : -apple-system, 'SF Pro Display', 'SF Pro Text',
+                           'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing : antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x             : hidden;
+  overscroll-behavior-x  : none;
 }
