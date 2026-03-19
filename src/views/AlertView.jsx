@@ -264,11 +264,12 @@ function STYLES(t) {
     .av-type-btn {
       display:flex; align-items:center; gap:0;
       width:100%; text-align:left;
-      background:${t.surface}; border:1px solid ${t.border};
+      background:${t.surface}; border:${t.cardBorder};
+      box-shadow:${t.cardShadow};
       border-radius:14px; cursor:pointer; overflow:hidden;
       transition:all .18s; padding:0;
     }
-    .av-type-btn:hover { border-color:rgba(28,133,133,0.35); }
+    .av-type-btn:hover { box-shadow:0 6px 20px rgba(0,0,0,0.11); }
     .av-type-btn--on   { }
 
     .av-type-bar {
@@ -315,12 +316,13 @@ function STYLES(t) {
     }
     .av-sug-btn {
       padding:10px 10px; background:${t.surface};
-      border:1px solid ${t.border}; border-radius:10px;
+      border:${t.cardBorder}; box-shadow:${t.cardShadow};
+      border-radius:10px;
       cursor:pointer; font-family:${SF}; font-size:13px;
       color:${t.fgSub}; text-align:left;
       transition:all .13s; font-weight:400;
     }
-    .av-sug-btn:hover    { border-color:${P.teal}; color:${P.teal}; }
+    .av-sug-btn:hover    { box-shadow:0 4px 14px rgba(0,0,0,0.10); color:${P.teal}; }
     .av-sug-btn--on      { background:${t.fg}; border-color:${t.fg}; color:${t.bg}; font-weight:600; }
 
     /* submit button */

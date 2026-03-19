@@ -131,7 +131,8 @@ export function HomeScreen({ theme, onAction, t }) {
           border-radius: 20px;
           padding: 22px 20px;
           margin-bottom: 16px;
-          border: 1px solid rgba(29,162,126,0.25);
+          border: none;
+          box-shadow: 0 4px 20px rgba(0,0,0,0.18);
           animation: hsFadeUp .3s ease .15s both;
         }
 
@@ -238,18 +239,19 @@ export function HomeScreen({ theme, onAction, t }) {
 
         .hs-nav-card {
           background: ${T.surface};
-          border: 1px solid ${T.border};
+          border: ${T.cardBorder};
+          box-shadow: ${T.cardShadow};
           border-radius: 16px;
           padding: 15px 14px;
           text-align: left;
           cursor: pointer;
-          transition: background .15s, transform .15s, border-color .15s;
+          transition: background .15s, transform .15s, box-shadow .15s;
           position: relative;
           overflow: hidden;
         }
         .hs-nav-card:hover {
           background: ${T.cardHover};
-          border-color: rgba(29,162,126,0.3);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.11);
           transform: translateY(-1px);
         }
         .hs-nav-card:active { transform: scale(0.984); }

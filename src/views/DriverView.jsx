@@ -133,7 +133,8 @@ export function DriverView({ signals, routes, t }) {
             background: t.surface,
             display: "flex", alignItems: "center", justifyContent: "center",
             margin: "0 auto 20px",
-            border: `1px solid ${t.border}`,
+            border: t.cardBorder,
+            boxShadow: t.cardShadow,
           }}>
             <span style={{ fontSize: 26 }}>🚐</span>
           </div>
@@ -155,7 +156,7 @@ export function DriverView({ signals, routes, t }) {
           <div style={{
             marginTop: 32, background: t.surface,
             borderRadius: 16, padding: "18px 16px", textAlign: "left",
-            border: `1px solid ${t.border}`,
+            border: t.cardBorder, boxShadow: t.cardShadow,
           }}>
             <p style={{
               fontSize: 10, fontWeight: 600, color: t.muted,
@@ -288,7 +289,8 @@ export function DriverView({ signals, routes, t }) {
         <div style={{
           marginTop: 24, padding: "14px 16px",
           background: t.surface,
-          border: `1px solid ${t.border}`,
+          border: t.cardBorder,
+          boxShadow: t.cardShadow,
           borderRadius: 14,
           display: "flex", justifyContent: "space-between",
           alignItems: "center", gap: 12,
@@ -327,18 +329,19 @@ function RouteCard({ s, i, signals, expanded, setExpanded, t }) {
       onClick={() => setExpanded(isExp ? null : s.routeId)}
       style={{
         background: t.surface,
-        border: `1px solid ${t.border}`,
+        border: t.cardBorder,
+        boxShadow: t.cardShadow,
         borderRadius: 16, overflow: "hidden", cursor: "pointer",
         animation: `ksFadeUp .18s ease ${i * 0.04}s both`,
         transition: "transform .15s, box-shadow .15s",
       }}
       onMouseEnter={e => {
         e.currentTarget.style.transform = "translateY(-1px)";
-        e.currentTarget.style.boxShadow = `0 6px 20px rgba(0,0,0,0.12)`;
+        e.currentTarget.style.boxShadow = `0 8px 24px rgba(0,0,0,0.13)`;
       }}
       onMouseLeave={e => {
         e.currentTarget.style.transform = "translateY(0)";
-        e.currentTarget.style.boxShadow = "none";
+        e.currentTarget.style.boxShadow = t.cardShadow;
       }}
     >
       {/* Urgency accent line at top */}

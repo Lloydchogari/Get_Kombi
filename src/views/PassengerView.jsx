@@ -362,7 +362,8 @@ function STYLES(t) {
     /* card */
     .pv-card {
       background: ${t.surface};
-      border: 1px solid ${t.border};
+      border: ${t.cardBorder};
+      box-shadow: ${t.cardShadow};
       border-radius: 18px; padding: 16px;
     }
     .pv-card-label {
@@ -485,7 +486,8 @@ function STYLES(t) {
     .pv-route-pill {
       display: inline-flex; align-items: center; gap: 8px;
       background: ${t.surface};
-      border: 1px solid ${t.border};
+      border: ${t.cardBorder};
+      box-shadow: ${t.cardShadow};
       border-radius: 999px; padding: 10px 20px;
     }
     .pv-route-name { font-size: 15px; font-weight: 700; color: ${t.fg}; letter-spacing: -0.01em; }
@@ -493,7 +495,8 @@ function STYLES(t) {
 
     .pv-counter-card {
       background: ${t.surface};
-      border: 1px solid ${t.border};
+      border: ${t.cardBorder};
+      box-shadow: ${t.cardShadow};
       border-radius: 18px; overflow: hidden;
       margin-bottom: 12px;
     }

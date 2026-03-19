@@ -108,10 +108,11 @@ export function InfoView({ t }) {
           width: 42px; height: 42px;
           border-radius: 50%; flex-shrink: 0;
           background: ${t.surface};
-          border: 1px solid ${t.border};
+          border: ${t.cardBorder};
+          box-shadow: ${t.cardShadow};
           display: flex; align-items: center; justify-content: center;
           position: relative; z-index: 1;
-          transition: border-color .2s, background .2s;
+          transition: box-shadow .2s, background .2s;
         }
         .iv-step-num-text {
           font-size: 12px; font-weight: 700;
@@ -122,14 +123,15 @@ export function InfoView({ t }) {
         .iv-step-card {
           flex: 1;
           background: ${t.surface};
-          border: 1px solid ${t.border};
+          border: ${t.cardBorder};
+          box-shadow: ${t.cardShadow};
           border-radius: 16px;
           padding: 15px 16px;
-          transition: border-color .2s, transform .15s;
+          transition: box-shadow .2s, transform .15s;
           margin-top: 4px;
         }
         .iv-step-card:hover {
-          border-color: rgba(28,133,133,0.35);
+          box-shadow: 0 6px 20px rgba(0,0,0,0.11);
           transform: translateX(2px);
         }
 
@@ -179,7 +181,8 @@ export function InfoView({ t }) {
         }
         .iv-stat {
           background: ${t.surface};
-          border: 1px solid ${t.border};
+          border: ${t.cardBorder};
+          box-shadow: ${t.cardShadow};
           border-radius: 14px;
           padding: 14px 10px;
           text-align: center;

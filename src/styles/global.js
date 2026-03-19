@@ -1,15 +1,13 @@
 // ─── GLOBAL CSS STRING ───────────────────────────────────────────────────────
 // Injected via <style> in App.jsx once at mount.
 // Palette: #15292E · #074047 · #1C8585 · #1DA27E · #C8D6D8 · #FFFFFF
-// Font: SF Pro — iOS system font stack
+// Font: SF Pro (iOS system font)
 
 export const GLOBAL_CSS = `
 
   /* ── Font stack ── */
   :root {
     --sf: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Arial, sans-serif;
-
-    /* Single unified font variable used everywhere */
     --ks-display : var(--sf);
     --ks-body    : var(--sf);
 
@@ -103,7 +101,6 @@ export const GLOBAL_CSS = `
     overflow-x              : hidden;
   }
 
-  /* Remove tap highlight on mobile */
   button, a, [role="button"] {
     -webkit-tap-highlight-color : transparent;
     touch-action                : manipulation;
@@ -114,162 +111,90 @@ export const GLOBAL_CSS = `
     outline     : none;
   }
 
-  /* Slim scrollbar */
   ::-webkit-scrollbar       { width: 4px; height: 4px; }
   ::-webkit-scrollbar-track { background: transparent; }
-  ::-webkit-scrollbar-thumb {
-    border-radius : 4px;
-    background    : rgba(28,133,133,0.25);
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgba(29,162,126,0.40);
-  }
+  ::-webkit-scrollbar-thumb { border-radius: 4px; background: rgba(28,133,133,0.22); }
+  ::-webkit-scrollbar-thumb:hover { background: rgba(29,162,126,0.40); }
 
-  /* ── Keyframes ────────────────────────────────────────────────────────── */
-
-  /* Page / view entrance */
+  /* ── Keyframes ── */
   @keyframes ks-fadeUp {
     from { opacity: 0; transform: translateY(12px); }
     to   { opacity: 1; transform: translateY(0);    }
   }
-
   @keyframes ks-fadeIn {
     from { opacity: 0; }
     to   { opacity: 1; }
   }
-
-  /* Bottom panel slide up (onboarding) */
   @keyframes ks-slideUp {
     from { opacity: 0; transform: translateY(28px); }
     to   { opacity: 1; transform: translateY(0);    }
   }
-
-  /* Live dot pulse */
   @keyframes ks-pulse {
     0%, 100% { opacity: 1;   transform: scale(1);    }
     50%       { opacity: 0.3; transform: scale(0.72); }
   }
-
-  /* Dropdown / card entrance */
   @keyframes ks-scaleIn {
     from { opacity: 0; transform: scale(0.93) translateY(-4px); }
     to   { opacity: 1; transform: scale(1)    translateY(0);    }
   }
-
-  /* Counter number pop */
   @keyframes ks-scaleInPop {
     from { opacity: 0; transform: scale(0.82); }
     to   { opacity: 1; transform: scale(1);    }
   }
-
-  /* Splash exit — fades out after showing */
   @keyframes ks-splashOut {
     from { opacity: 1;  transform: scale(1);    }
     to   { opacity: 0;  transform: scale(1.04); pointer-events: none; }
   }
-
-  /* Splash wordmark rises in with blur */
   @keyframes ks-splashText {
     from { opacity: 0; transform: translateY(16px); filter: blur(8px); }
     to   { opacity: 1; transform: translateY(0);    filter: blur(0);   }
   }
-
-  /* Accent bar under splash wordmark extends */
   @keyframes ks-splashLine {
     from { opacity: 0; width: 0; }
     to   { opacity: 1; width: 56px; }
   }
-
-  /* Expanding ring (onboarding, success screens) */
   @keyframes ks-ringExpand {
     from { opacity: 0; transform: scale(0.55); }
     to   { opacity: 1; transform: scale(1);    }
   }
-
-  /* Glow radial pulse */
   @keyframes ks-glowPulse {
     0%, 100% { transform: scale(1);    opacity: 1;   }
     50%       { transform: scale(1.15); opacity: 0.6; }
   }
-
-  /* Button shimmer sweep */
   @keyframes ks-shimmer {
     0%   { left: -100%; }
     100% { left: 160%;  }
   }
-
-  /* Dot grid fade in */
   @keyframes ks-dotFade {
     from { opacity: 0; }
     to   { opacity: 1; }
   }
 
-  /* ── Utility classes ──────────────────────────────────────────────────── */
-
-  /* Visually hidden (accessibility) */
+  /* ── Utility ── */
   .ks-sr-only {
-    position   : absolute;
-    width      : 1px;
-    height     : 1px;
-    padding    : 0;
-    margin     : -1px;
-    overflow   : hidden;
-    clip       : rect(0,0,0,0);
-    white-space: nowrap;
-    border     : 0;
+    position   : absolute; width: 1px; height: 1px;
+    padding    : 0; margin: -1px; overflow: hidden;
+    clip       : rect(0,0,0,0); white-space: nowrap; border: 0;
   }
 
-  /* ── Layout helpers ───────────────────────────────────────────────────── */
-
-  /* Centred page wrapper */
+  /* ── Layout helpers ── */
   .ks-page {
-    width     : 100%;
-    max-width : var(--content-max);
-    margin    : 0 auto;
-    padding   : 0 var(--space-md);
+    width: 100%; max-width: var(--content-max);
+    margin: 0 auto; padding: 0 var(--space-md);
   }
-  @media (min-width: 900px) {
-    .ks-page { padding: 0 var(--space-lg); }
-  }
-
-  /* Stack → Row at tablet */
   .ks-row {
-    display        : flex;
-    flex-direction : column;
-    gap            : var(--space-sm);
+    display: flex; flex-direction: column; gap: var(--space-sm);
   }
-  @media (min-width: 640px) {
-    .ks-row { flex-direction: row; }
-  }
+  @media (min-width: 640px) { .ks-row { flex-direction: row; } }
 
-  /* Signal button pair — stacked on mobile, side-by-side on tablet+ */
-  .ks-signal-btns {
-    display               : grid;
-    grid-template-columns : 1fr;
-    gap                   : 10px;
-  }
-  @media (min-width: 640px) {
-    .ks-signal-btns { grid-template-columns: 1fr 1fr; }
-  }
+  .ks-signal-btns { display: grid; grid-template-columns: 1fr; gap: 10px; }
+  @media (min-width: 640px) { .ks-signal-btns { grid-template-columns: 1fr 1fr; } }
 
-  /* Counter cells */
-  .ks-counter-grid {
-    display               : grid;
-    grid-template-columns : 1fr 1fr;
-    gap                   : 1px;
-  }
+  .ks-counter-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; }
 
-  /* Driver route cards — 1 col mobile, 2 col desktop */
-  .ks-driver-grid {
-    display               : grid;
-    grid-template-columns : 1fr;
-    gap                   : 8px;
-  }
-  @media (min-width: 900px) {
-    .ks-driver-grid { grid-template-columns: 1fr 1fr; }
-  }
+  .ks-driver-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+  @media (min-width: 900px) { .ks-driver-grid { grid-template-columns: 1fr 1fr; } }
 
-  /* Nav visibility */
   .ks-side-nav   { display: none; }
   .ks-bottom-nav { display: flex; }
   @media (min-width: 720px) {
@@ -277,20 +202,15 @@ export const GLOBAL_CSS = `
     .ks-bottom-nav { display: none;  }
   }
 
-  /* Tag chip row */
-  .ks-tags {
-    display   : flex;
-    flex-wrap : wrap;
-    gap       : 8px;
-  }
+  .ks-tags { display: flex; flex-wrap: wrap; gap: 8px; }
 
-  /* ── Theme: dark (default) ────────────────────────────────────────────── */
+  /* ── Theme: dark ── */
   .ks-theme-dark {
     --bg        : #0d1f23;
     --surface   : #15292E;
     --surfaceB  : #0a191c;
     --border    : rgba(200,214,216,0.11);
-    --border2   : rgba(200,214,216,0.16);
+    --border2   : rgba(200,214,216,0.17);
     --topBarBg  : rgba(13,31,35,0.82);
     --fg        : #ffffff;
     --fgSub     : rgba(255,255,255,0.70);
@@ -303,17 +223,17 @@ export const GLOBAL_CSS = `
     --amber     : #E8A84A;
   }
 
-  /* ── Theme: light ─────────────────────────────────────────────────────── */
+  /* ── Theme: light — pure white ── */
   .ks-theme-light {
-    --bg        : #eef4f4;
+    --bg        : #ffffff;
     --surface   : #ffffff;
-    --surfaceB  : #f5fafa;
-    --border    : rgba(7,64,71,0.10);
-    --border2   : rgba(7,64,71,0.16);
-    --topBarBg  : rgba(238,244,244,0.88);
+    --surfaceB  : #f7f7f7;
+    --border    : rgba(0,0,0,0.08);
+    --border2   : rgba(0,0,0,0.12);
+    --topBarBg  : rgba(255,255,255,0.90);
     --fg        : #15292E;
     --fgSub     : rgba(21,41,46,0.72);
-    --muted     : rgba(7,64,71,0.46);
+    --muted     : rgba(21,41,46,0.42);
     --accent    : #1DA27E;
     --accentFg  : #ffffff;
     --green     : #1DA27E;
